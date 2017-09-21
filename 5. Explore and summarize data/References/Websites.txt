@@ -1,0 +1,4 @@
+http://ggplot2.tidyverse.org/reference/index.html
+https://stackoverflow.com/documentation/r/1334/ggplot2#t=201709131659389759339
+https://en.wikipedia.org/wiki/Pressing_(wine)
+https://www.kaggle.com/piyushgoyal443/red-wine-dataset

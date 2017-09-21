@@ -1,0 +1,469 @@
+Explore and summarize Red Wine data by Sai Raj Reddy
+=====================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+library(ggplot2)
+library(gridExtra)
+library(reshape)
+library(scales)
+library(GGally)
+library(lattice)
+library(dplyr)
+library(MASS)
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+red_wine_data <- read.csv('data/wineQualityReds.csv')
+```
+
+#Dataset Introduction
+This is a clean and wrangled dataset based on research by Cortez et al., 2009 to explore and mine quality of red wine. This dataset focuses on red variant of of the Portuguese "Vinho Verde" wine. The dataset is designed in such a way that various psychochemical features determine the quality of wine which is represented by sensory feature.  
+
+```{r}
+str(red_wine_data)
+```
+
+# Univariate Plots Section
+
+```{r echo=FALSE, Univariate_Plot_Section_1}
+ggplot(aes(x = fixed.acidity), data = red_wine_data) +
+  geom_histogram(fill="#FFA74F", colour="#ffffff", binwidth = 1) +
+  labs(x='Fixed acidity value', y='Instances') +
+  ggtitle("Fixed acidity variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* 8.299 g/dm^3 is the average fixed acidity. 
+* There must be outliers (Large values of fixed acidity) from the data as the distribution is negatively skewed a bit.
+
+
+```{r echo=FALSE, Univariate_Plot_Section_2}
+ggplot(aes(x = chlorides), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.03) +
+  labs(x='Chloride value', y='Instances') +
+  ggtitle("Chlorides variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* Chlorides tell about the salt amount present in wine. Since it is highly skewed towards left, there are many outliers present. 
+* These outlier values can reach to 0.64 g/dm^3 chloride. 
+
+
+```{r echo=FALSE, Univariate_Plot_Section_3}
+ggplot(aes(x = density), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.0005) +
+  labs(x='Density value (g/cm^3)', y='Instances') +
+  ggtitle("Density variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* It is normally distributed. 
+* The mean and median values being equal to 0.99 g/cm^3 explains the normality. 
+
+
+```{r echo=FALSE, Univariate_Plot_Section_4}
+ggplot(aes(x = pH), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.05) +
+  labs(x='pH value', y='Instances') +
+  ggtitle("pH variation")+
+  theme(axis.text.y= element_text(size=6))
+```
+
+* pH values are also normally distribited.
+* The most common range is 3 - 4 pH for the red wines. 
+
+
+```{r echo=FALSE, Univariate_Plot_Section_5}
+ggplot(aes(x = alcohol), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.5) +
+  labs(x='Alcohol value (%)', y='Instances') +
+  ggtitle("Alcohol presence variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* Interesting to find that very few wine have large percentage of alcohol mixed in them.
+
+
+```{r echo=FALSE, Univariate_Plot_Section_6}
+red_wine_data$total.acidity <- red_wine_data$fixed.acidity+red_wine_data$volatile.acidity
+ggplot(aes(x = total.acidity), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff", binwidth = 1) +
+  ggtitle("Total acidity variation") +
+  labs(x='Total acidity value (g/dm^3)', y='Instances') +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* The fact that the volatile acidity in wines are variably small is proven with this new variable.
+* The variation of total acidity is similar to variation of fixed acidity,
+since volatile acidity in all the wines are very small.
+
+
+```{r echo=FALSE, Univariate_Plot_Section_7}
+ggplot(aes(x = volatile.acidity), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.05) +
+  labs(x='Volatile acidity', y='Instances') +
+  ggtitle("Volatile acidity variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* Volatile acidity is little skewed. 
+
+```{r echo=FALSE, Univariate_Plot_Section_8}
+ggplot(aes(x = citric.acid), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.05) +
+  labs(x='Citric Acid', y='Instances') +
+  ggtitle("Citric acid variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* Most of them are with less citric acid. 
+
+```{r echo=FALSE, Univariate_Plot_Section_9}
+ggplot(aes(x = residual.sugar), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 1) +
+  labs(x='Residual Sugar', y='Instances') +
+  ggtitle("Residual Sugar variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* It's skewed up. 
+
+```{r echo=FALSE, Univariate_Plot_Section_10}
+ggplot(aes(x = free.sulfur.dioxide), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 2.5) +
+  labs(x='Free Sulphur Dioxide', y='Instances') +
+  ggtitle("Free Sulphur Dioxide variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* Let's see how this will vary with Total Sulphur Dioxide
+
+```{r echo=FALSE, Univariate_Plot_Section_11}
+ggplot(aes(x = total.sulfur.dioxide), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 10) +
+  labs(x='Total Sulphur Dioxide', y='Instances') +
+  ggtitle("Total Sulphur Dioxide variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* The distribution is less significantly different from the Free Sulfur Dioxide. 
+
+```{r echo=FALSE, Univariate_Plot_Section_12}
+ggplot(aes(x = sulphates), data = red_wine_data)+
+  geom_histogram(fill="#FFA74F", colour="#ffffff",binwidth = 0.05) +
+  labs(x='Sulphates', y='Instances') +
+  ggtitle("Sulphates variation") +
+  theme(axis.text.y= element_text(size=6))
+```
+
+* It's little skewed up.
+
+# Univariate Analysis
+
+```{r echo=FALSE, Univariate_Analysis_Plot_1}
+ggplot(aes(x = quality), data = red_wine_data) +
+  geom_bar(fill="#FFA74F", stat='count') +
+  labs(x='Quality of wine (Score)', y='Instances') +
+  ggtitle("Wine quality distribution")
+```
+
+* The output variable of this dataset is 'quality'. 
+* This gives us the overall picture of how the input can affect the quality. 
+* Therefore quality can be considered as the basis for any multivariate or bivariate analysis from this point.
+
+
+### What is the structure of your dataset?
+
+* The dataset contains 1599 rows
+* 12 input variables and 1 output variable. All the variables are numeric.
+
+
+### What is/are the main feature(s) of interest in your dataset?
+
+* The output variable 'quality' which is based on the sensory data.
+* Major interesting features to explore are :- pH, Alchohol and acidity.
+
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+
+* Sulphates and density seems to be interesting  and are good fit for further analysis.
+
+
+### Did you create any new variables from existing variables in the dataset?
+
+* Yes, I created a new variable for total amount of acidity.
+* The fact that the volatile acidity in wines are variably small is proven with this new variable.
+* The variation of total acidity is similar to variation of fixed acidity,
+since volatile acidity in all the wines are very small.
+
+
+# Bivariate Plots Section
+
+```{r echo=FALSE, Bivariate_Plot_Section_1}
+ggplot(aes(x=pH,y=total.acidity),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("pH and Density correlation")+
+  labs(x='pH', y='Density')
+```
+
+* This shows the correlation between pH and Density.
+* It clearly indicates how it is inversly proportional in descending manner.
+
+
+```{r echo=FALSE, Bivariate_Plot_Section_2}
+ggplot(aes(x=fixed.acidity,y=pH),data=red_wine_data)+
+      geom_jitter(color='#FF7F0E', alpha=0.3)+
+      ggtitle("pH and Fixed Acidity")+
+      labs(x='Fixed Acidity (g/dm^3)', y='pH')
+```
+
+* This shows the direct relationship between pH and fixed acidity. 
+* They are directly proportional. 
+
+
+```{r echo=FALSE, Bivariate_Plot_Section_3}
+ggplot(aes(factor(quality), alcohol),data=red_wine_data)+
+  geom_jitter(alpha=0.05)+
+  ggtitle("Alcohol and Quality")+
+  geom_boxplot(alpha = 0.5, colour = '#FFA74F')+
+  stat_summary(fun.y = "mean", 
+      geom = "point", 
+      color = "red",
+      shape = 15,
+      size = 5)+
+  labs(x='Quality', y='Alcohol - (%)') +
+  theme(panel.background = element_blank())
+```
+
+* It's quite obvious of the fact that all wines contain some amount of alcohol.
+* We can observe that higher the quality of wine, higher is its alcohol presence. 
+* The box plots convey how the quantity of alcohol increases from its average point as the quality increases. 
+
+```{r echo=FALSE, Bivariate_Plot_Section_4}
+  ggplot(aes(x=residual.sugar,y=alcohol),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("Residual sugar and Alcohol correlation")+
+  labs(x='Residual sugar', y='Alcohol')
+```
+
+* Not a very strong relationship, as the correlation looks very skewed. 
+* I tried this as I wanted to interpret how alcohol can affect residual sugars left. 
+
+```{r echo=FALSE, Bivariate_Plot_Section_5}
+  ggplot(aes(x=total.acidity, y=alcohol),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("Total acidity and Alcohol correlation")+
+  labs(x='Total acidity', y='Alcohol') 
+```
+
+* Spare correlation.
+* Acidity doesn't correlate much with alcohol.
+
+```{r echo=FALSE, Bivariate_Plot_Section_6}
+  ggplot(aes(x=sulphates, y=alcohol),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("Sulphates and Alcohol correlation")+
+  labs(x='Sulphates', y='Alcohol') 
+```
+
+* There is somewhat a good relationship between sulphates content and alchohol presence.
+* It's inversely proportional in an ideal situation. 
+
+```{r echo=FALSE, Bivariate_Plot_Section_7}
+  ggplot(aes(x=pH, y=alcohol),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("pH and Alcohol correlation")+
+  labs(x='pH', y='Alcohol') 
+```
+
+* We can find interesting patterns here, as pH values are affected slightly because of alcohol presence. 
+
+```{r echo=FALSE, Bivariate_Plot_Section_8}
+  ggplot(aes(x=pH, y=citric.acid),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("pH and Citric Acid correlation")+
+  labs(x='pH', y='Citric Acid') 
+```
+
+* Usually citric acid is one of the strongest forms of acid.
+* There's a good correlation here to indicate how citric acid affects the pH
+
+```{r echo=FALSE, Bivariate_Plot_Section_9}
+  ggplot(aes(x=pH, y=sulphates),data=red_wine_data)+
+  geom_point(color='#FF7F0E', alpha=0.2) +
+  ggtitle("pH and Sulphates correlation")+
+  labs(x='pH', y='Sulphates') 
+```
+
+* This also shows some mid-way correlation between sulphaes and pH.
+* It's interesting to see how sulphates affect only the medium range pH values. (3 - 3.5) 
+
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+
+* We can observe that higher the quality of wine, higher is its alcohol presence. 
+* The box plots convey how the quantity of alcohol increases from its average point as the quality increases. 
+
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+Yes, the relationship that is established between pH and density. They are inversely proportional.
+
+
+### What was the strongest relationship you found?
+
+* The direct relationship between pH and fixed acidity. 
+* They are directly proportional. 
+
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, Multivariate_Plots_Section_1}
+ggplot(aes(x=alcohol,y=density, color=factor(quality)),data=red_wine_data)+
+  geom_point(alpha=0.7) +
+  ggtitle("Alcohol, Density and Quality")+
+  labs(x='Alcohol - (%)', y='Density - (g/cm^3)') +
+  geom_smooth(method = "lm", se = FALSE,size=0.8)  +
+  scale_color_brewer(type='seq', palette = 3, guide=guide_legend(title='Quality value'))
+```
+                    
+* The low rated wines are found more in the high density and low alcohol area i.e. top-left. 
+* The high rated wines are concentrated in low density high alcohol i.e bottom-right.
+* Considering the regressionn lines for every quality stub, we find that the lines
+for the lower quality categories tend towards the left and they have steeper slope. 
+
+
+```{r echo=FALSE, Multivariate_Plots_Section_2}
+ggplot(aes(x=density,y=alcohol),data=red_wine_data)+
+  geom_point(aes(color=total.acidity), alpha=0.5) +
+  scale_colour_gradient(name = "Total Acidity", 
+                    low = "orange", high = "gray")+
+  ggtitle("Alcohol, Density and Total Acidity")+
+  labs(x='Density - (g/cm^3)', y='Alcohol - (%)')
+```
+
+* Higher is the alcohol content, lower the density of wine. 
+* Considering the total acidity as the color scale to the alcohol, density graph. We see that the total acidity is higher in the wine with high density. 
+* It is also spread across the wine with various levels of alcohol presence.
+
+```{r echo=FALSE, Multivariate_Plots_Section_3}
+ggplot(aes(x=density,y=alcohol),data=red_wine_data)+
+  geom_point(aes(color=pH), alpha=0.5) +
+  scale_colour_gradient(name = "pH", 
+                    low = "orange", high = "gray")+
+  ggtitle("Alcohol, Density and pH")+
+  labs(x='Density - (g/cm^3)', y='Alcohol - (%)')
+```
+
+* The variation is low from the deciding factor of pH.
+
+```{r echo=FALSE, Multivariate_Plots_Section_4}
+ggplot(aes(x=density,y=alcohol),data=red_wine_data)+
+  geom_point(aes(color=citric.acid), alpha=0.5) +
+  scale_colour_gradient(name = "Citric Acid", 
+                    low = "orange", high = "gray")+
+  ggtitle("Alcohol, Density and Citric Acid")+
+  labs(x='Density - (g/cm^3)', y='Alcohol - (%)')
+```
+
+* Citric acid correlation and its variance acorss the density is strong.
+
+```{r echo=FALSE, Multivariate_Plots_Section_5}
+ggplot(aes(x=density,y=alcohol),data=red_wine_data)+
+  geom_point(aes(color=chlorides), alpha=0.2) +
+  scale_colour_gradient(name = "Chlorides", 
+                    low = "orange", high = "gray")+
+  ggtitle("Alcohol, Density and Chlorides")+
+  labs(x='Density - (g/cm^3)', y='Alcohol - (%)')
+```
+
+* The strongly correlated points of density vs alcohol have low residual sugars left.
+* This shows how the correct combination of density and alcohol can lead to low residual sugar. 
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+* Yes, we can observe that in the second plot. 
+* Higher is the alcohol content, lower the density of wine. 
+* Considering the total acidity as the color scale to the alcohol, density graph. We see that the total acidity is higher in the wine with high density. 
+* It is also spread across the wine with various levels of alcohol presence.
+
+
+### Were there any interesting or surprising interactions between features?
+
+* Yes the first plot is interesting to check how the lower quality wine categories have steeper slope. 
+* The low rated wines are found more in the high density and low alcohol area i.e. top-left. 
+* The high rated wines are concentrated in low density high alcohol i.e bottom-right.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+
+```{r echo=FALSE, Final_Plot_1}
+ggplot(aes(x = quality), data = red_wine_data) +
+  geom_bar(fill="#FFA74F", stat='count') +
+  labs(x='Quality of wine (Score)', y='Instances') +
+  ggtitle("Wine quality distribution")
+```
+
+
+### Description One
+
+* The output variable of this dataset is 'quality'. 
+* This gives us the overall picture of how the input can affect the quality. 
+* Therefore quality can be considered as the basis for any multivariate or bivariate analysis from this point.
+
+
+### Plot Two
+```{r echo=FALSE, Final_Plot_2}
+ggplot(aes(x=fixed.acidity,y=pH),data=red_wine_data)+
+      geom_jitter(color='#FF7F0E', alpha=0.3)+
+      ggtitle("pH and Fixed Acidity")+
+      xlab('Fixed Acidity (g/dm^3)')+
+      ylab('pH')+
+      theme(panel.background = element_blank())
+```
+
+
+### Description Two
+
+* This shows the direct relationship between pH and fixed acidity. 
+* The variables -- pH and Fixed Acidity have an inverse relationship. More the pH, lesser the fixed acidity and vice versa.
+
+
+
+### Plot Three
+
+```{r echo=FALSE, Final_Plot_3}
+ggplot(aes(x=alcohol,y=density, color=factor(quality)),data=red_wine_data)+
+  geom_point(alpha=0.7) +
+  ggtitle("Alcohol, Density and Quality")+
+  labs(x='Alcohol - (%)', y='Density - (g/cm^3)') +
+  geom_smooth(method = "lm", se = FALSE,size=0.8)  +
+  scale_color_brewer(type='seq', palette = 3, guide=guide_legend(title='Quality value'))
+```
+
+### Description Three
+
+* The low rated wines are found more in the high density and low alcohol area i.e. top-left. 
+* The high rated wines are concentrated in low density high alcohol i.e bottom-right.
+* Considering the regressionn lines for every quality stub, we find that the lines
+for the lower quality categories tend towards the left and they have steeper slope. 
+
+------
+
+# Reflection
+
+* Exploration of the Red Wine dataset helped me understand the interesting relationships between the features and especially those between pH and density, alcohol and acidity to quality. 
+
+* Since most of the wine data we dealt is with medium quality, it was possible to weaken the inference strength. This means more data, preferably 50,000+ rows of sensored wine values should help to give strong inference. 
+
+* It's easier to perform regression analysis of the quality with larger amount of data. 
+
+* Future work can be explored in the areas how features like Sulfur Dioxide and Chlorides also affect the quality. This needs deeper understanding of how the psychochemical factors determine the quality. Especially for the multivariate plots. 

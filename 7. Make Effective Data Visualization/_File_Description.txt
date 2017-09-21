@@ -1,0 +1,4 @@
+data -- Contains Titanic Dataset
+js -- Contains D3 related JS files
+first_index.html -- My first version of data viz.
+final_index.html -- My final version of data viz based on feedback.

@@ -1,0 +1,16 @@
+I. Variable description.
+
+survival        Survival
+                (0 = No and 1 = Yes)
+pclass          Passenger Class
+                (1 = 1st, 2 = 2nd and 3 = 3rd)
+name            Name of the survivor
+sex             Gender of the survivor
+age             Age of the survivor
+sibsp           Number of Siblings/Spouses Aboard
+parch           Number of Parents/Children Aboard
+ticket          Ticket number
+fare            Passenger fare
+cabin           Cabin section presence
+embarked        Port of Embarkation
+                (C = Cherbourg, Q = Queenstown and S = Southampton)

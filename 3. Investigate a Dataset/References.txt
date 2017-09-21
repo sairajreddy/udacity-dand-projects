@@ -1,0 +1,5 @@
+I. References :
+
+https://matplotlib.org/examples/api/barchart_demo.html
+https://matplotlib.org/devdocs/api/_as_gen/matplotlib.pyplot.hist.html
+Various stackoverflow sites.
